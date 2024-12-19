@@ -28,6 +28,6 @@ jobs:
       - name: Upload to TdA
         uses: Tour-de-App/upload-app@tda-25
         with:
-          team_token: ${{ secrets.TEAM_TOKEN }}
+          team_token: \${\{ secrets.TEAM_TOKEN \}\}
           image_name: tda
           image_path: /tmp/tda.tar
