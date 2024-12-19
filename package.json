@@ -1,0 +1,16 @@
+{
+  "name": "tda25-kosfordv3",
+  "version": "1.0.0",
+  "description": "Šablona pro vývoj aplikace pro Tour de App obsahující pouze GitHub Action s vytvořením a nahráním výstupu. Je potřeba přidat Dockerfile, který na základě zdrojového kódu aplikace vytvoří docker image vaší aplikace.  Aplikace může běžet na libovolném portu zpřístupněném pomocí příkazu `EXPOSE PORT_NUMBER` ve vaší Dockerfile.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2"
+  }
+}
