@@ -192,7 +192,7 @@ app.delete('/api/v1/games/:game_id', async (req, res) => {
 
     await game_database.del(game_id);
 
-    res.status(204).end({
+    res.status(204).json({
         'description': 'Záznam byl úspěšně smazán'
     });
 });
