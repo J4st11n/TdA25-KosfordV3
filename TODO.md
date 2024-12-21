@@ -1,0 +1,1 @@
+- Přidat do game.ejs výbět velikosti hry

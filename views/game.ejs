@@ -12,13 +12,14 @@
     <div id="status">Player X's turn</div>
 
     <script>
+        /*
         window.onload = async function(){
             const gridSize = 15;
             const game = document.getElementById('game');
             const status = document.getElementById('status');
             let currentPlayer = 'X';
 
-            let response = await fetch(`/api/games/${location.pathname.split('/').pop()}`, {
+            let response = await fetch(`/api/v1/games/${location.pathname.split('/').pop()}`, {
                 method: 'GET'
             });
 
@@ -57,7 +58,7 @@
 
                     json_response.board = board;
 
-                    await fetch(`/api/games/${location.pathname.split('/').pop()}`, {
+                    await fetch(`/api/v1/games/${location.pathname.split('/').pop()}`, {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
@@ -123,7 +124,7 @@
                     cell.removeEventListener('click', onCellClick);
                     cell.style.cursor = 'default'
 
-                    fetch(`/api/games/${location.pathname.split('/').pop()}`, {
+                    fetch(`/api/v1/games/${location.pathname.split('/').pop()}`, {
                         method: 'DELETE'
                     });
                 });
@@ -131,6 +132,7 @@
 
             createBoard();
         }
+        */
     </script>
 </body>
 </html>

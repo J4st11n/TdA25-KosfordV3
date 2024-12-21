@@ -3,7 +3,8 @@ let persist = require('node-persist')
 
 let game_database = persist.create({
     dir: './game_database',
-    expiredInterval: 24 * 60 * 60 * 1000
+    ttl: 24 * 60 * 60 * 1000,
+    expiredInterval: 60 * 1000
 });
 
 game_database.init();
@@ -22,7 +23,6 @@ app.get('/', (req, res) => {
 });
 
 app.get('/games/:game_id', async (req, res) => {
-    // add some loading :)
     let game_id = req.params.game_id;
 
     let game = await game_database.get(game_id);
@@ -32,51 +32,171 @@ app.get('/games/:game_id', async (req, res) => {
     res.status(200).render("game");
 });
 
-app.get('/api/games/:game_id', async (req, res) => {
+/***************************** API *****************************/
+
+// POST /games
+app.post('/api/v1/games', async (req, res) => {
+    let game_params = req.body;
+
+
+    if(!game_params?.difficulty) return res.status(400).json({
+        'code': 400,
+        'message': 'Bad request: Missing field DifficultyType'
+    });
+
+    if(!game_params?.name) return res.status(400).json({
+        'code': 400,
+        'message': 'Bad request: Missing field name'
+    });
+
+    if(!game_params?.board) return res.status(400).json({
+        'code': 400,
+        'message': 'Bad request: Missing field board'
+    });
+
+
+    if(!['beginner', 'easy', 'medium', 'hard', 'extreme'].includes(game_params.difficulty)) return res.status(422).json({
+        'code': 422,
+        'message': `Semantic error: Expected DifficultyType, got ${difficulty} instead`
+    });
+
+    if(!game_params.name instanceof String) return res.status(422).json({
+        'code': 422,
+        'message': `Semantic error: Expected name to be instance of String, got ${typeof game_params.name} instead`
+    });
+
+    if(!game_params.board instanceof Array || game_params.board.find((row) => !row instanceof Array)) return res.status(422).json({
+        'code': 422,
+        'message': `Semantic error: Expected DifficultyType, got ${typeof game_params.board} and ${typeof game_params.board.find((row) => !row instanceof Array)} instead`
+    });
+
+
+    let game_id = Math.random().toString(36).substring(2);
+
+    let current_date = new Date()
+
+    let schema = {
+        createdAt: `${current_date.toLocaleDateString()}-${current_date.toLocaleTimeString()}`,
+        updatedAt: `${current_date.toLocaleDateString()}-${current_date.toLocaleTimeString()}`,
+        name: game_params.name,
+        difficulty: game_params.difficulty,
+        gameState: 'opening',
+        board: game_params.board                 /*                                         Array(15).fill(null).map(() => Array(15).fill(''))                     */
+    };
+
+    let created_game = await game_database.set(game_id, schema);
+
+    let content = created_game.content;
+
+    content.uuid = game_id;
+
+    res.status(201).json({
+        'schema': content,
+        'description': 'Hra úspěšně vytvořena.'
+    });
+});
+
+// GET /games
+app.get('/api/v1/games', async (req, res) => {
+    let games = await game_database.data();
+
+    let content = games.map((game) => {
+        let object = game.value;
+
+        object.uuid = game.key
+    });
+
+    res.status(200).json(content);
+});
+
+// GET /games/{uuid}
+app.get('/api/v1/games/:game_id', async (req, res) => {
     let game_id = req.params.game_id;
 
     let game = await game_database.get(game_id);
 
-    if(!game) return res.status(404).json({"message": "Game Not Found"});
+    if(!game) return res.status(404).json({
+        'code': 404,
+        'message': 'Resource not found'
+    });
+
+    game.uuid = game_id
 
     res.status(200).json(game);
 });
 
-app.put('/api/games/:game_id', async (req, res) => {
+// PUT /games/{uuid}
+app.put('/api/v1/games/:game_id', async (req, res) => {
     let game_id = req.params.game_id;
 
-    await game_database.update(game_id, req.body);
+    let game = await game_database.get(game_id);
 
-    res.status(200).end('true')
+    if(!game) return res.status(404).json({
+        'code': 404,
+        'message': 'Resource not found'
+    });
+
+    let update = req.body;
+
+    if(!update.name) return res.status(400).json({
+        'code': 400,
+        'message': 'Bad request: Missing field name'
+    });
+
+    if(!update.difficulty) return res.status(400).json({
+        'code': 400,
+        'message': 'Bad request: Missing field difficulty'
+    });
+
+    if(!update?.board) return res.status(400).json({
+        'code': 400,
+        'message': 'Bad request: Missing field board'
+    });
+
+    if(!update.name instanceof String) return res.status(422).json({
+        'code': 422,
+        'message': `Semantic error: Expected name to be instance of String, got ${typeof update.name} instead`
+    });
+
+    if(!['beginner', 'easy', 'medium', 'hard', 'extreme'].includes(update.difficulty)) return res.status(422).json({
+        'code': 422,
+        'message': `Semantic error: Expected DifficultyType, got ${difficulty} instead`
+    });
+
+    if(!update.board instanceof Array || !update.board?.find((row) => !row instanceof Array)) return res.status(422).json({
+        'code': 422,
+        'message': `Semantic error: Expected DifficultyType, got ${difficulty} instead`
+    });
+
+    let updated_game = await game_database.update(game_id, req.body);
+
+    updated_game.uuid = game_id;
+
+    res.status(200).end({
+        'scheme': updated_game.content,
+        'description': 'Upravený záznam hry'
+    });
 });
 
-
-app.delete('/api/games/:game_id', async (req, res) => {
+app.delete('/api/v1/games/:game_id', async (req, res) => {
     let game_id = req.params.game_id;
+
+    let game = await game_database.get(game_id);
+
+    if(!game) return res.status(404).json({
+        'code': 404,
+        'message': 'Resource not found'
+    });
 
     await game_database.del(game_id);
 
-    res.status(200).end('true')
-});
-
-
-app.post('/api/games', async (req, res) => {
-    let game_id = Math.random().toString(36).substring(2);
-
-    let date_now = Date.now();
-
-    let database_length = await game_database.length()
-
-    await game_database.set(game_id, {
-        "created_at": date_now,
-        "updated_at": date_now,
-        "name": `game_${database_length}`,
-        "game_state": "opening",
-        "board": Array(15).fill(null).map(() => Array(15).fill(null))
+    res.status(204).end({
+        'description': 'Záznam byl úspěšně smazán'
     });
-
-    res.json({"game_id": game_id});
 });
+
+/***************************** API *****************************/
+
 
 app.get('*', (req, res) => {
     res.status(404).end("Page Not Found")
