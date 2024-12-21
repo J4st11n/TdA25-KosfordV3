@@ -4,70 +4,183 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>15x15 Tic Tac Toe</title>
-    <link rel="stylesheet" href="/game.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        h1 {
+            margin: 20px 0;
+        }
+
+        #game {
+            display: grid;
+            grid-template-columns: repeat(15, 40px);
+            grid-template-rows: repeat(15, 40px);
+            gap: 1px;
+            background-color: black;
+        }
+
+        .cell {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .cell.taken {
+            pointer-events: none;
+            cursor: default;
+        }
+
+        #status {
+            margin: 20px 0;
+            font-size: 18px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 <body>
-    <div class="board" id="board"></div>
+    <h1>15x15 Tic Tac Toe</h1>
+    <div id="game"></div>
+    <div id="status">Player X's turn</div>
 
     <script>
-        function update(gameBoard) {
-            const boardElement = document.getElementById('board');
+        window.onload = async function(){
+            const gridSize = 15;
+            const game = document.getElementById('game');
+            const status = document.getElementById('status');
+            let currentPlayer = 'X';
 
-            boardElement.innerHTML = '';
-            function renderBoard(board) {
-                board.forEach((row, rowIndex) => {
-                    row.forEach((cell, colIndex) => {
-                        const cellElement = document.createElement('div');
-                        cellElement.classList.add('cell');
-                        cellElement.textContent = cell;
-                        cellElement.addEventListener('click', () => onCellClick(rowIndex, colIndex));
-                        boardElement.appendChild(cellElement);
-                    });
-                });
-            };
-
-            async function onCellClick(row, col) {
-                if (gameBoard[row][col] === ''){
-                    gameBoard[row][col] = 'X';
-
-                    let response = await fetch(`/api/games/${location.pathname.split('/').pop()}`, {
-                        method: 'GET'
-                    });
-
-                    let game = await response.json();
-
-                    game.board = gameBoard;
-
-                    let response2 = await fetch(`/api/games/${location.pathname.split('/').pop()}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(game)
-                    });
-
-                    let updated = await response2.text();
-
-                    if(updated === 'true'){
-                        update(gameBoard)
-                    } else {
-                        gameBoard[row][col] = '';
-                    };
-                }
-            }
-
-            renderBoard(gameBoard);
-        };
-
-        window.onload = async () => {
             let response = await fetch(`/api/games/${location.pathname.split('/').pop()}`, {
                 method: 'GET'
             });
 
-            let game = await response.json();
+            let json_response = await response.json();
 
-            update(game.board);
-        };
+            let board = json_response.board;
+
+            function createBoard() {
+                game.innerHTML = '';
+                for (let row = 0; row < gridSize; row++) {
+                    for (let col = 0; col < gridSize; col++) {
+                        const cell = document.createElement('div');
+                        let filling = board[row][col]
+                        cell.textContent = filling;
+                        if(filling){
+                            cell.classList.add('taken');
+                        };
+                        cell.classList.add('cell');
+                        cell.dataset.row = row;
+                        cell.dataset.col = col;
+                        cell.addEventListener('click', onCellClick);
+                        game.appendChild(cell);
+                    }
+                }
+            }
+
+            async function onCellClick(event) {
+                const cell = event.target;
+                const row = parseInt(cell.dataset.row);
+                const col = parseInt(cell.dataset.col);
+
+                if (!board[row][col]) {
+                    board[row][col] = currentPlayer;
+                    cell.textContent = currentPlayer;
+                    cell.classList.add('taken');
+
+                    json_response.board = board;
+
+                    await fetch(`/api/games/${location.pathname.split('/').pop()}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(json_response)
+                    });
+
+                    if (checkWinner(row, col)) {
+                        status.textContent = `Player ${currentPlayer} wins!`;
+                        endGame();
+                    } else if (board.flat().every(cell => cell)) {
+                        status.textContent = 'It\'s a draw!';
+                    } else {
+                        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+                        status.textContent = `Player ${currentPlayer}'s turn`;
+                    }
+                }
+            }
+
+            function checkWinner(row, col) {
+                const directions = [
+                    { dr: 0, dc: 1 }, // Horizontal
+                    { dr: 1, dc: 0 }, // Vertical
+                    { dr: 1, dc: 1 }, // Diagonal down-right
+                    { dr: 1, dc: -1 } // Diagonal down-left
+                ];
+
+                for (let { dr, dc } of directions) {
+                    let count = 1;
+
+                    // Check in one direction
+                    for (let i = 1; i < 5; i++) {
+                        const r = row + dr * i;
+                        const c = col + dc * i;
+                        if (r >= 0 && r < gridSize && c >= 0 && c < gridSize && board[r][c] === currentPlayer) {
+                            count++;
+                        } else {
+                            break;
+                        }
+                    }
+
+                    // Check in the opposite direction
+                    for (let i = 1; i < 5; i++) {
+                        const r = row - dr * i;
+                        const c = col - dc * i;
+                        if (r >= 0 && r < gridSize && c >= 0 && c < gridSize && board[r][c] === currentPlayer) {
+                            count++;
+                        } else {
+                            break;
+                        }
+                    }
+
+                    if (count >= 5) {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+
+            function endGame() {
+                document.querySelectorAll('.cell').forEach(cell => {
+                    cell.removeEventListener('click', onCellClick);
+                    cell.style.cursor = 'default'
+
+                    fetch(`/api/games/${location.pathname.split('/').pop()}`, {
+                        method: 'DELETE'
+                    });
+                });
+            }
+
+            createBoard();
+        }
     </script>
 </body>
 </html>
