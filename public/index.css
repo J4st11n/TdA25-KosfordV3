@@ -1,5 +1,45 @@
 body {
+    margin: 0;
+    display: flex;
+    height: 100vh;
     font-family: Arial, sans-serif;
-    background-color: #242424;
-    color: #ffffff;
+}
+
+.split {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.left {
+    background-color: #007BFF;
+}
+
+.right {
+    background-color: #28A745;
+}
+
+.label {
+    text-align: center;
+    font-size: 250%;
+    transition: transform 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+}
+
+.label:hover {
+    transform: scale(1.2);
+}
+
+.separator {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 2px;
+    background-color: white;
+    z-index: 1;
 }

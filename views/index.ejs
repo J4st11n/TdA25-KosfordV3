@@ -1,12 +1,34 @@
-<%- include('navbar'); -%>
 <!DOCTYPE html>
 <html>
     <head>
-        <title>X/O | HOME</title>
+        <title>Kosford Piškvorky</title>
         <link rel="stylesheet" href="/index.css">
         <link rel="stylesheet" href="/navbar.css">
     </head>
     <body>
-        Hello TdA
+        <div class="split left">
+            <div class="label" onclick="start_game('PvP')">Player vs Player</div>
+        </div>
+        <div class="separator"></div>
+        <div class="split right">
+            <div class="label" onclick="start_game('PvE')">Player vs Bot</div>
+        </div>
     </body>
+
+    <script>
+        async function start_game(game_type){
+            // add some loading :)
+            let response = await fetch('/api/games', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({"game_type": game_type})
+            });
+
+            let new_game = await response.json();
+
+            location.href = `/games/${new_game.game_id}`;
+        };
+    </script>
 </html>
