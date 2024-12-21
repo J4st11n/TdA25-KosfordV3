@@ -29,14 +29,58 @@ app.get('/games/:game_id', async (req, res) => {
 
     if(!game) return res.status(404).end('Game Not Found!')
 
-    res.status(200).json(game)
+    res.status(200).render("game");
 });
+
+app.get('/api/games/:game_id', async (req, res) => {
+    let game_id = req.params.game_id;
+
+    let game = await game_database.get(game_id);
+
+    if(!game) return res.status(404).json({"message": "Game Not Found"});
+
+    res.status(200).json(game);
+});
+
+app.put('/api/games/:game_id', async (req, res) => {
+    let game_id = req.params.game_id;
+
+    await game_database.update(game_id, req.body);
+
+    res.status(200).end('true')
+});
+
 
 app.post('/api/games', async (req, res) => {
     let game_id = Math.random().toString(36).substring(2);
 
+    let date_now = Date.now();
+
+    let database_length = await game_database.length()
+
     await game_database.set(game_id, {
-        game_type: req.body.game_type // create a game with default scheme
+        "game_type": req.body.game_type,
+        "created_at": date_now,
+        "updated_at": date_now,
+        "name": `game_${database_length}`,
+        "game_state": "opening",
+        "board": [
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+            ['', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+        ]
     });
 
     res.json({"game_id": game_id});

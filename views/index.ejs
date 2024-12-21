@@ -3,7 +3,6 @@
     <head>
         <title>Kosford Piškvorky</title>
         <link rel="stylesheet" href="/index.css">
-        <link rel="stylesheet" href="/navbar.css">
     </head>
     <body>
         <div class="split left">
@@ -17,13 +16,16 @@
 
     <script>
         async function start_game(game_type){
-            // add some loading :)
+            // add loading
+
             let response = await fetch('/api/games', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({"game_type": game_type})
+                body: JSON.stringify({
+                    "game_type": game_type
+                })
             });
 
             let new_game = await response.json();

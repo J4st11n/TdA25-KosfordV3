@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15x15 Tic Tac Toe</title>
+    <link rel="stylesheet" href="/game.css">
+</head>
+<body>
+    <div class="board" id="board"></div>
+
+    <script>
+        function update(gameBoard) {
+            const boardElement = document.getElementById('board');
+
+            boardElement.innerHTML = '';
+            function renderBoard(board) {
+                board.forEach((row, rowIndex) => {
+                    row.forEach((cell, colIndex) => {
+                        const cellElement = document.createElement('div');
+                        cellElement.classList.add('cell');
+                        cellElement.textContent = cell;
+                        cellElement.addEventListener('click', () => onCellClick(rowIndex, colIndex));
+                        boardElement.appendChild(cellElement);
+                    });
+                });
+            };
+
+            async function onCellClick(row, col) {
+                if (gameBoard[row][col] === ''){
+                    gameBoard[row][col] = 'X';
+
+                    let response = await fetch(`/api/games/${location.pathname.split('/').pop()}`, {
+                        method: 'GET'
+                    });
+
+                    let game = await response.json();
+
+                    game.board = gameBoard;
+
+                    let response2 = await fetch(`/api/games/${location.pathname.split('/').pop()}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(game)
+                    });
+
+                    let updated = await response2.text();
+
+                    if(updated === 'true'){
+                        update(gameBoard)
+                    } else {
+                        gameBoard[row][col] = '';
+                    };
+                }
+            }
+
+            renderBoard(gameBoard);
+        };
+
+        window.onload = async () => {
+            let response = await fetch(`/api/games/${location.pathname.split('/').pop()}`, {
+                method: 'GET'
+            });
+
+            let game = await response.json();
+
+            update(game.board);
+        };
+    </script>
+</body>
+</html>
