@@ -86,7 +86,7 @@ app.post('/api/v1/games', async (req, res) => {
 
     let created_game = await game_database.set(game_id, schema);
 
-    let content = created_game.content;
+    let content = created_game.content.value;
 
     content.uuid = game_id;
 
@@ -104,6 +104,8 @@ app.get('/api/v1/games', async (req, res) => {
         let object = game.value;
 
         object.uuid = game.key
+
+        return object;
     });
 
     res.status(200).json(content);
