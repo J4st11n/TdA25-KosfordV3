@@ -4,57 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>15x15 Tic Tac Toe</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-        }
-
-        h1 {
-            margin: 20px 0;
-        }
-
-        #game {
-            display: grid;
-            grid-template-columns: repeat(15, 40px);
-            grid-template-rows: repeat(15, 40px);
-            gap: 1px;
-            background-color: black;
-        }
-
-        .cell {
-            width: 40px;
-            height: 40px;
-            background-color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .cell.taken {
-            pointer-events: none;
-            cursor: default;
-        }
-
-        #status {
-            margin: 20px 0;
-            font-size: 18px;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-        }
-    </style>
+    <link rel="stylesheet" href="/game.css">
 </head>
 <body>
     <h1>15x15 Tic Tac Toe</h1>

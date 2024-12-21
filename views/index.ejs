@@ -5,32 +5,25 @@
         <link rel="stylesheet" href="/index.css">
     </head>
     <body>
-        <div class="split left">
-            <div class="label" onclick="start_game('PvP')">Player vs Player</div>
-        </div>
-        <div class="separator"></div>
-        <div class="split right">
-            <div class="label" onclick="start_game('PvE')">Player vs Bot</div>
+        <div id="start-screen">
+            <button id="start-button">START GAME</button>
         </div>
     </body>
 
     <script>
-        async function start_game(game_type){
-            // add loading
+        window.onload = function(){
+            const startButton = document.getElementById('start-button');
 
-            let response = await fetch('/api/games', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "game_type": game_type
-                })
+            startButton.addEventListener('click', async function(){
+
+                let response = await fetch('/api/games', {
+                    method: 'POST'
+                });
+
+                let new_game = await response.json();
+
+                location.href = `/games/${new_game.game_id}`;
             });
-
-            let new_game = await response.json();
-
-            location.href = `/games/${new_game.game_id}`;
         };
     </script>
 </html>

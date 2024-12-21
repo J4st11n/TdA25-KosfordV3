@@ -68,7 +68,6 @@ app.post('/api/games', async (req, res) => {
     let database_length = await game_database.length()
 
     await game_database.set(game_id, {
-        "game_type": req.body.game_type,
         "created_at": date_now,
         "updated_at": date_now,
         "name": `game_${database_length}`,
