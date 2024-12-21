@@ -165,9 +165,9 @@ app.put('/api/v1/games/:game_id', async (req, res) => {
         'message': `Semantic error: Expected DifficultyType, got ${difficulty} instead`
     });
 
-    if(!update.board instanceof Array || !update.board?.find((row) => !row instanceof Array)) return res.status(422).json({
+    if(!game_params.board instanceof Array || game_params.board.find((row) => !row instanceof Array)) return res.status(422).json({
         'code': 422,
-        'message': `Semantic error: Expected DifficultyType, got ${difficulty} instead`
+        'message': `Semantic error: Expected DifficultyType, got ${typeof game_params.board} and ${typeof game_params.board.find((row) => !row instanceof Array)} instead`
     });
 
     let updated_game = await game_database.update(game_id, req.body);
