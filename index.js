@@ -131,7 +131,7 @@ app.put('/api/v1/games/:game_id', async (req, res) => {
 
     let update = req.body;
 
-    if(!update?.name || !update?.difficulty || !update?.board) return res.status(400).json({
+    if(!(update?.name || update?.difficulty || update?.board)) return res.status(400).json({
         'code': 400,
         'message': 'Bad request: Missing GameCreateUpdateRequest'
     });
