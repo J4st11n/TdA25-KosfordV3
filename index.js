@@ -171,11 +171,14 @@ app.put('/api/v1/games/:game_id', async (req, res) => {
 
     let updated_game = await game_database.update(game_id, game);
 
-    updated_game.uuid = game_id;
+    let req_response = updated_game.content.value
 
-    res.status(200).json(updated_game.content);
+    req_response.uuid = game_id;
+
+    res.status(200).json(req_response);
 });
 
+// DELETE /games/{uuid}
 app.delete('/api/v1/games/:game_id', async (req, res) => {
     let game_id = req.params.game_id;
 
