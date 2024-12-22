@@ -90,10 +90,7 @@ app.post('/api/v1/games', async (req, res) => {
 
     content.uuid = game_id;
 
-    res.status(201).json({
-        'schema': content,
-        'description': 'Hra úspěšně vytvořena.'
-    });
+    res.status(201).json(content);
 });
 
 // GET /games
@@ -140,44 +137,43 @@ app.put('/api/v1/games/:game_id', async (req, res) => {
 
     let update = req.body;
 
-    if(!update.name) return res.status(400).json({
+    if(!update?.name || !update?.difficulty || !update?.board) return res.status(400).json({
         'code': 400,
-        'message': 'Bad request: Missing field name'
+        'message': 'Bad request: Missing GameCreateUpdateRequest'
     });
 
-    if(!update.difficulty) return res.status(400).json({
-        'code': 400,
-        'message': 'Bad request: Missing field difficulty'
-    });
-
-    if(!update?.board) return res.status(400).json({
-        'code': 400,
-        'message': 'Bad request: Missing field board'
-    });
-
-    if(!update.name instanceof String) return res.status(422).json({
+    if(update?.name && !update.name instanceof String) return res.status(422).json({
         'code': 422,
         'message': `Semantic error: Expected name to be instance of String, got ${typeof update.name} instead`
     });
 
-    if(!['beginner', 'easy', 'medium', 'hard', 'extreme'].includes(update.difficulty)) return res.status(422).json({
+    if(update?.difficulty && !['beginner', 'easy', 'medium', 'hard', 'extreme'].includes(update.difficulty)) return res.status(422).json({
         'code': 422,
         'message': `Semantic error: Expected DifficultyType, got ${difficulty} instead`
     });
 
-    if(!game_params.board instanceof Array || game_params.board.find((row) => !row instanceof Array)) return res.status(422).json({
+    if(update?.board && !update.board instanceof Array || update.board.find((row) => !row instanceof Array)) return res.status(422).json({
         'code': 422,
-        'message': `Semantic error: Expected DifficultyType, got ${typeof game_params.board} and ${typeof game_params.board.find((row) => !row instanceof Array)} instead`
+        'message': `Semantic error: Expected DifficultyType, got ${typeof update.board} and ${typeof update.board.find((row) => !row instanceof Array)} instead`
     });
 
-    let updated_game = await game_database.update(game_id, req.body);
+    if(update?.name){
+        game.name = update.name
+    };
+
+    if(update?.difficulty){
+        game.difficulty = update.difficulty
+    };
+
+    if(update?.board){
+        game.board = update.board
+    };
+
+    let updated_game = await game_database.update(game_id, game);
 
     updated_game.uuid = game_id;
 
-    res.status(200).end({
-        'scheme': updated_game.content,
-        'description': 'Upravený záznam hry'
-    });
+    res.status(200).end(updated_game.content);
 });
 
 app.delete('/api/v1/games/:game_id', async (req, res) => {
@@ -192,9 +188,7 @@ app.delete('/api/v1/games/:game_id', async (req, res) => {
 
     await game_database.del(game_id);
 
-    res.status(204).json({
-        'description': 'Záznam byl úspěšně smazán'
-    });
+    res.status(204).send()
 });
 
 /***************************** API *****************************/
