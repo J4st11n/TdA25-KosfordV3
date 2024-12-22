@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
     res.status(200).render('index');
 });
 
-app.get('/games/:game_id', async (req, res) => {
+app.get('/game/:game_id', async (req, res) => {
     let game_id = req.params.game_id;
 
     let game = await game_database.get(game_id);
@@ -32,6 +32,7 @@ app.get('/games/:game_id', async (req, res) => {
 
     res.status(200).render("game");
 });
+
 
 /***************************** API *****************************/
 
@@ -184,9 +185,4 @@ app.delete('/api/v1/games/:game_id', async (req, res) => {
 
 /***************************** API *****************************/
 
-
-app.get('*', (req, res) => {
-    res.status(404).end("Page Not Found")
-});
-
-app.listen(3000)
+app.listen(3000);
