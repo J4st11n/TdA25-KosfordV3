@@ -77,6 +77,7 @@ app.post('/api/v1/games', async (req, res) => {
     let current_date = new Date()
 
     let schema = {
+        uuid: game_id ,
         createdAt: `${current_date.toLocaleDateString()}-${current_date.toLocaleTimeString()}`,
         updatedAt: `${current_date.toLocaleDateString()}-${current_date.toLocaleTimeString()}`,
         name: game_params.name,
@@ -87,26 +88,14 @@ app.post('/api/v1/games', async (req, res) => {
 
     let created_game = await game_database.set(game_id, schema);
 
-    let content = created_game.content.value;
-
-    content.uuid = game_id;
-
-    res.status(201).json(content);
+    res.status(201).json(created_game.content.value);
 });
 
 // GET /games
 app.get('/api/v1/games', async (req, res) => {
-    let games = await game_database.data();
+    let games = await game_database.values();
 
-    let content = games.map((game) => {
-        let object = game.value;
-
-        object.uuid = game.key
-
-        return object;
-    });
-
-    res.status(200).json(content);
+    res.status(200).json(games);
 });
 
 // GET /games/{uuid}
@@ -119,8 +108,6 @@ app.get('/api/v1/games/:game_id', async (req, res) => {
         'code': 404,
         'message': 'Resource not found'
     });
-
-    game.uuid = game_id
 
     res.status(200).json(game);
 });
@@ -176,11 +163,7 @@ app.put('/api/v1/games/:game_id', async (req, res) => {
 
     let updated_game = await game_database.update(game_id, game);
 
-    let req_response = updated_game.content.value
-
-    req_response.uuid = game_id;
-
-    res.status(200).json(req_response);
+    res.status(200).json(updated_game.content.value);
 });
 
 // DELETE /games/{uuid}
