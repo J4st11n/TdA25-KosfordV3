@@ -1,5 +1,6 @@
 let express = require('express');
 let persist = require('node-persist')
+let { v4: uuidv4 } = require('uuid')
 
 let game_database = persist.create({
     dir: './game_database',
@@ -71,7 +72,7 @@ app.post('/api/v1/games', async (req, res) => {
     });
 
 
-    let game_id = Math.random().toString(36).substring(2);
+    let game_id = uuidv4();
 
     let current_date = new Date()
 
@@ -168,6 +169,10 @@ app.put('/api/v1/games/:game_id', async (req, res) => {
     if(update?.board){
         game.board = update.board
     };
+
+    let current_date = new Date()
+
+    game.updatedAt = `${current_date.toLocaleDateString()}-${current_date.toLocaleTimeString()}`;
 
     let updated_game = await game_database.update(game_id, game);
 
