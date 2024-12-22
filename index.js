@@ -23,6 +23,11 @@ app.get('/', (req, res) => {
     res.status(200).render('index');
 });
 
+app.get('/game', (req, res) => {
+    res.status(200).render('create_game');
+});
+
+
 app.get('/game/:game_id', async (req, res) => {
     let game_id = req.params.game_id;
 

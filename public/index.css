@@ -9,18 +9,3 @@ body {
     font-family: Arial, sans-serif;
     overflow: hidden;
 }
-
-#start-button {
-    background: #007BFF;
-    color: white;
-    border: none;
-    padding: 20px 40px;
-    font-size: 24px;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: background 0.3s;
-}
-
-#start-button:hover {
-    background: #0056b3;
-}
