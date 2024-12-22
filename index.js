@@ -173,7 +173,7 @@ app.put('/api/v1/games/:game_id', async (req, res) => {
 
     updated_game.uuid = game_id;
 
-    res.status(200).end(updated_game.content);
+    res.status(200).json(updated_game.content);
 });
 
 app.delete('/api/v1/games/:game_id', async (req, res) => {
