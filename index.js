@@ -119,7 +119,7 @@ app.get('/api/v1/games/:game_id', async (req, res) => {
 });
 
 // PUT /games/{uuid}
-app.put('/api/v1/games/:game_id', async (req, res) => {
+app.put('/api/v1/games/:game_id', async (req, res) => { // Nevím něco se tu jebe a crashuje express sever, někdy to musím opravit, nejlépe 23. 12. 2024
     let game_id = req.params.game_id;
 
     let game = await game_database.get(game_id);
