@@ -64,17 +64,17 @@ app.post('/api/v1/games', async (req, res) => {
 
     if(!['beginner', 'easy', 'medium', 'hard', 'extreme'].includes(game_params.difficulty)) return res.status(422).json({
         'code': 422,
-        'message': `Semantic error: Expected DifficultyType, got ${difficulty} instead`
+        'message': `Semantic error: Not a valid DifficultyType`
     });
 
-    if(!game_params.name instanceof String) return res.status(422).json({
+    if(typeof game_params.name !== 'string') return res.status(422).json({
         'code': 422,
-        'message': `Semantic error: Expected name to be instance of String, got ${typeof game_params.name} instead`
+        'message': `Semantic error: Not a valid name`
     });
 
-    if(!game_params.board instanceof Array || game_params.board.find((row) => !row instanceof Array)) return res.status(422).json({
+    if(!Array.isArray(game_params.board) || game_params.board.length !== 15 || !game_params.board.every((row) => Array.isArray(row) && row.length === 15 && row.every(cell => cell === "X" || cell === "O" || cell === ""))) return res.status(422).json({
         'code': 422,
-        'message': `Semantic error: Expected DifficultyType, got ${typeof game_params.board} and ${typeof game_params.board.find((row) => !row instanceof Array)} instead`
+        'message': `Semantic error: Not a valid board`
     });
 
 
@@ -89,7 +89,7 @@ app.post('/api/v1/games', async (req, res) => {
         name: game_params.name,
         difficulty: game_params.difficulty,
         gameState: 'opening',
-        board: game_params.board                 /*                                         Array(15).fill(null).map(() => Array(15).fill(''))                     */
+        board: game_params.board
     };
 
     let created_game = await game_database.set(game_id, schema);
@@ -131,12 +131,12 @@ app.put('/api/v1/games/:game_id', async (req, res) => {
 
     let update = req.body;
 
-    if(!(update?.name || update?.difficulty || update?.board)) return res.status(400).json({
+    if(!update?.name && !update?.difficulty && !update?.board) return res.status(400).json({
         'code': 400,
         'message': 'Bad request: Missing GameCreateUpdateRequest'
     });
 
-    if(update?.name && !(update.name instanceof String)) return res.status(422).json({
+    if(update?.name && typeof update.name !== 'string') return res.status(422).json({
         'code': 422,
         'message': `Semantic error: Not a valid name`
     });
@@ -152,18 +152,18 @@ app.put('/api/v1/games/:game_id', async (req, res) => {
     });
 
     if(update?.name){
-        game.name = update.name
+        game.name = update.name;
     };
 
     if(update?.difficulty){
-        game.difficulty = update.difficulty
+        game.difficulty = update.difficulty;
     };
 
     if(update?.board){
-        game.board = update.board
+        game.board = update.board;
     };
 
-    let current_date = new Date()
+    let current_date = new Date();
 
     game.updatedAt = `${current_date.toLocaleDateString()}-${current_date.toLocaleTimeString()}`;
 
@@ -185,7 +185,7 @@ app.delete('/api/v1/games/:game_id', async (req, res) => {
 
     await game_database.del(game_id);
 
-    res.status(204).send()
+    res.status(204).send();
 });
 
 /***************************** API *****************************/
