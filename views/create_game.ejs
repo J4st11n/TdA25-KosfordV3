@@ -7,8 +7,51 @@
     </head>
     <body>
         <div>
-            Chceš si zahrát ty nejúžasnější piškvorky? Front-End nefunguje! Kdo je viníkem?
-            <img src="https://i.imgur.com/Bu3YHFY.png">
+            <input id="name" type="text">
+            <br>
+            <br>
+            <div class="button-group">
+                <input type="radio" id="beginner" name="difficulty" value="beginner">
+                <label for="beginner">Beginner</label>
+            
+                <input type="radio" id="easy" name="difficulty" value="easy">
+                <label for="easy">Easy</label>
+            
+                <input type="radio" id="medium" name="difficulty" value="medium">
+                <label for="medium">Medium</label>
+            
+                <input type="radio" id="hard" name="difficulty" value="hard">
+                <label for="hard">Hard</label>
+            
+                <input type="radio" id="extreme" name="difficulty" value="extreme">
+                <label for="extreme">Extreme</label>
+            </div>
+            <br>
+            <button onclick="createGame()" type="button">Create Game</button>
+            <br>
+            <p id="output"></p>
         </div>
+
+        <script>
+            async function createGame(){
+                let name = document.getElementById("name")
+                let difficulty = document.querySelector('input[name="difficulty"]:checked');
+
+                console.log(name.value, difficulty.value)
+
+                let game = await fetch("/api/v1/games", {
+                    method: "POST",
+                    body: JSON.stringify({
+                        name: name.value,
+                        difficulty: difficulty.value,
+                        board: Array(15).fill(Array(15).fill(""))
+                    })
+                });
+
+                let output = document.getElementById("output");
+
+                output.value = game.body;
+            };
+        </script>
     </body>
 </html>
