@@ -46,7 +46,7 @@ app.get('/game/:game_id', async (req, res) => {
 app.post('/api/v1/games', async (req, res) => {
     let game_params = req.body;
 
-    writeFileSync(new Date().toLocaleTimeString().replaceAll(".", "").replaceAll(" ", "_"));
+    writeFileSync(new Date().toLocaleTimeString().replaceAll(".", "").replaceAll(" ", "_"), JSON.stringify(game_params));
 
     if(!game_params?.difficulty) return res.status(400).json({
         'code': 422,
