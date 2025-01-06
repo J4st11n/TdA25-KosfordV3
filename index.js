@@ -1,6 +1,7 @@
 let express = require('express');
 let persist = require('node-persist')
 let { v4: uuidv4 } = require('uuid')
+let { writeFileSync } = require("fs");
 
 let game_database = persist.create({
     dir: './game_database',
@@ -45,7 +46,7 @@ app.get('/game/:game_id', async (req, res) => {
 app.post('/api/v1/games', async (req, res) => {
     let game_params = req.body;
 
-    console.log(game_params);
+    writeFileSync(new Date().toLocaleTimeString().replaceAll(".", "").replaceAll(" ", "_"));
 
     if(!game_params?.difficulty) return res.status(400).json({
         'code': 422,
