@@ -91,8 +91,8 @@ body {
 }
 
 .x-1 {
-    top: 10%;
-    left: 83%;
+    top: 5%;
+    right: 5%;
 }
 
 .x-2 {
@@ -108,7 +108,7 @@ body {
 
 .x-4 {
     top: 40%;
-    left: 35%;
+    left: 10%;
 }
 
 .x-1::before, .x-1::after, .x-2::before, .x-2::after, .x-3::before, .x-3::after, .x-4::before, .x-4::after {
