@@ -80,13 +80,15 @@ app.post('/api/v1/games', async (req, res) => {
 
     let current_date = new Date()
 
+    let turns = game_params.board.flat().length;
+
     let schema = {
         uuid: game_id ,
         createdAt: `${current_date.toLocaleDateString()}-${current_date.toLocaleTimeString()}`,
         updatedAt: `${current_date.toLocaleDateString()}-${current_date.toLocaleTimeString()}`,
         name: game_params.name,
         difficulty: game_params.difficulty,
-        gameState: 'opening',
+        gameState: turns <= 5 ? "opening" : "midgame",
         board: game_params.board
     };
 
