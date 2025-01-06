@@ -44,7 +44,7 @@ app.get('/game/:game_id', async (req, res) => {
 // POST /games
 app.post('/api/v1/games', async (req, res) => {
     let game_params = req.body;
-    /*
+
     if(!game_params?.difficulty) return res.status(400).json({
         'code': 422,
         'message': 'Bad request: Missing field DifficultyType'
@@ -75,7 +75,6 @@ app.post('/api/v1/games', async (req, res) => {
         'code': 422,
         'message': `Semantic error: Not a valid board`
     });
-    */
 
     let game_id = uuidv4();
 
@@ -87,7 +86,7 @@ app.post('/api/v1/games', async (req, res) => {
         updatedAt: `${current_date.toLocaleDateString()}-${current_date.toLocaleTimeString()}`,
         name: game_params.name,
         difficulty: game_params.difficulty,
-        gameState: game_params.gameState,
+        gameState: 'opening',
         board: game_params.board
     };
 
