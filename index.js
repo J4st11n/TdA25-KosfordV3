@@ -87,7 +87,7 @@ app.post('/api/v1/games', async (req, res) => {
         updatedAt: `${current_date.toLocaleDateString()}-${current_date.toLocaleTimeString()}`,
         name: game_params.name,
         difficulty: game_params.difficulty,
-        gameState: 'opening',
+        gameState: game_params.gameState,
         board: game_params.board
     };
 
