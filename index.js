@@ -61,10 +61,20 @@ app.post('/api/v1/games', async (req, res) => {
         'message': 'Bad request: Missing field board'
     });
 
+    if(!game_params?.gameState) return res.status(400).json({
+        'code': 400,
+        'message': 'Bad request: Missing field gameState'
+    });
+
 
     if(!['beginner', 'easy', 'medium', 'hard', 'extreme'].includes(game_params.difficulty)) return res.status(422).json({
         'code': 422,
         'message': `Semantic error: Not a valid DifficultyType`
+    });
+
+    if(!['opening', 'midgame', 'endgame', 'unknown'].includes(game_params.gameState)) return res.status(422).json({
+        'code': 422,
+        'message': `Semantic error: Not a valid gameState`
     });
 
     if(typeof game_params.name !== 'string') return res.status(422).json({
@@ -88,7 +98,7 @@ app.post('/api/v1/games', async (req, res) => {
         updatedAt: `${current_date.toLocaleDateString()}-${current_date.toLocaleTimeString()}`,
         name: game_params.name,
         difficulty: game_params.difficulty,
-        gameState: 'opening',
+        gameState: game_params.gameState,
         board: game_params.board
     };
 
