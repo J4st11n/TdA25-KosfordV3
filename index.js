@@ -45,6 +45,8 @@ app.get('/game/:game_id', async (req, res) => {
 app.post('/api/v1/games', async (req, res) => {
     let game_params = req.body;
 
+    console.log(game_params);
+
     if(!game_params?.difficulty) return res.status(400).json({
         'code': 422,
         'message': 'Bad request: Missing field DifficultyType'
@@ -88,7 +90,7 @@ app.post('/api/v1/games', async (req, res) => {
         updatedAt: `${current_date.toLocaleDateString()}-${current_date.toLocaleTimeString()}`,
         name: game_params.name,
         difficulty: game_params.difficulty,
-        gameState: turns-1 <= 5 ? "opening" : "midgame",
+        gameState: turns <= 5 ? "opening" : "midgame",
         board: game_params.board
     };
 
