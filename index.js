@@ -61,20 +61,9 @@ app.post('/api/v1/games', async (req, res) => {
         'message': 'Bad request: Missing field board'
     });
 
-    if(!game_params?.gameState) return res.status(400).json({
-        'code': 400,
-        'message': 'Bad request: Missing field gameState'
-    });
-
-
     if(!['beginner', 'easy', 'medium', 'hard', 'extreme'].includes(game_params.difficulty)) return res.status(422).json({
         'code': 422,
         'message': `Semantic error: Not a valid DifficultyType`
-    });
-
-    if(!['opening', 'midgame', 'endgame', 'unknown'].includes(game_params.gameState)) return res.status(422).json({
-        'code': 422,
-        'message': `Semantic error: Not a valid gameState`
     });
 
     if(typeof game_params.name !== 'string') return res.status(422).json({
@@ -98,7 +87,7 @@ app.post('/api/v1/games', async (req, res) => {
         updatedAt: `${current_date.toLocaleDateString()}-${current_date.toLocaleTimeString()}`,
         name: game_params.name,
         difficulty: game_params.difficulty,
-        gameState: game_params.gameState,
+        gameState: 'opening',
         board: game_params.board
     };
 
@@ -141,7 +130,7 @@ app.put('/api/v1/games/:game_id', async (req, res) => {
 
     let update = req.body;
 
-    if(!update?.name && !update?.difficulty && !update?.board) return res.status(400).json({
+    if(!update?.name && !update?.difficulty && !update?.board && !update?.gameState) return res.status(400).json({
         'code': 400,
         'message': 'Bad request: Missing GameCreateUpdateRequest'
     });
@@ -154,6 +143,11 @@ app.put('/api/v1/games/:game_id', async (req, res) => {
     if(update?.difficulty && !['beginner', 'easy', 'medium', 'hard', 'extreme'].includes(update.difficulty)) return res.status(422).json({
         'code': 422,
         'message': `Semantic error: Not a valid DifficultyType`
+    });
+
+    if(update?.gameState && !['opening', 'midgame', 'endgame', 'unknown'].includes(update.gameState)) return res.status(422).json({
+        'code': 422,
+        'message': `Semantic error: Not a valid gameState`
     });
 
     if(update?.board && (!Array.isArray(update.board) || update.board.length !== 15 || !update.board.every((row) => Array.isArray(row) && row.length === 15 && row.every(cell => cell === "X" || cell === "O" || cell === "")))) return res.status(422).json({
@@ -171,6 +165,10 @@ app.put('/api/v1/games/:game_id', async (req, res) => {
 
     if(update?.board){
         game.board = update.board;
+    };
+
+    if(update?.gameState){
+        game.gameState = update.gameState;
     };
 
     let current_date = new Date();
