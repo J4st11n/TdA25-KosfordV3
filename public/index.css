@@ -23,15 +23,15 @@ body {
 @keyframes fadeInFromTop {
     from {
       opacity: 0;
-      transform: translateY(-20px);
+      transform: translateY(-20px) scale(0.5);
     }
 
     to {
       opacity: 1;
-      transform: translateY(0);
+      transform: translateY(0) scale(0.6);
     }
 }
-  
+
 .circle-1 {
     width: 50px;
     height: 50px;
@@ -42,7 +42,7 @@ body {
     transform-origin: 50% 50%;
     left: 5%;
     top: 5%;
-    animation: fadeInFromTop .5s linear forwards, floating ease 4s infinite;
+    animation: fadeInFromTop 2s linear forwards, floating ease 4s infinite;
 }
   
 .circle-2 {
@@ -54,9 +54,9 @@ body {
     position: absolute;
     display: block;
     border-radius: 50%;
-    animation: fadeInFromTop .5s linear forwards, floating ease-in-out 4s infinite;
+    animation: fadeInFromTop 3s linear forwards, floating ease-in-out 4s infinite;
 }
-  
+
 .circle-3 {
     top: 35%;
     right: 20%;
@@ -66,7 +66,7 @@ body {
     position: absolute;
     display: block;
     border-radius: 50%;
-    animation: fadeInFromTop .5s linear forwards, floating ease-in-out 4s infinite;
+    animation: fadeInFromTop 1.5s linear forwards, floating ease-in-out 4s infinite;
 }
   
   @keyframes floating {
@@ -87,28 +87,31 @@ body {
     height: 70px;
     position: absolute;
     display: block;
-    animation: fadeInFromTop .5s linear forwards, floating ease-in-out 4s infinite;
 }
 
 .x-1 {
-    top: 5%;
-    right: 5%;
+    top: 5vh;
+    right: 5vh;
+    animation: fadeInFromTop 4s linear forwards, floating ease-in-out 4s infinite;
 }
 
 .x-2 {
-    top: 20%;
-    left: 75%;
+    top: 25vh;
+    left: 155vh;
+    animation: fadeInFromTop 2.5s linear forwards, floating ease-in-out 4s infinite;
 }
 
 .x-3 {
-    top: 10%;
-    left: 15%;
+    top: 15vh;
+    left: 25vh;
+    animation: fadeInFromTop 3.5s linear forwards, floating ease-in-out 4s infinite;
 }
 
 
 .x-4 {
-    top: 40%;
-    left: 10%;
+    top: 40vh;
+    left: 10vh;
+    animation: fadeInFromTop 1s linear forwards, floating ease-in-out 4s infinite;
 }
 
 .x-1::before, .x-1::after, .x-2::before, .x-2::after, .x-3::before, .x-3::after, .x-4::before, .x-4::after {
@@ -128,4 +131,48 @@ body {
 
 .x-1::after, .x-2::after, .x-3::after, .x-4::after {
     transform: rotate(-45deg);
+}
+
+.h1 {
+    padding-top: 25vh;
+    font-weight: bold;
+    font-family: sans-serif;
+    justify-self: center;
+    align-self: center;
+}
+
+.h1 {
+    color: white;
+    font-size: 200%;
+}
+
+.h1 .separator {
+    color: #b533dd;
+    padding-left: 2vh;
+    padding-right: 2vh;
+    font-size: 250%;
+}
+
+.h1 .text {
+    position: relative;
+    top: -1vh;
+}
+
+.create-game {
+    justify-self: center;
+    align-self: center;
+    padding-top: 20vh;
+    padding-bottom: 30vh;
+}
+
+.create-game .button {
+    background: linear-gradient(to top left, #9f0dcc, #2e56d8);
+    border: none;
+    font-size: 150%;
+    color: white;
+    font-weight: bold;
+    font-family: sans-serif;
+    padding: 25px 75px;
+    cursor: pointer;
+    border-radius: 12px;
 }
