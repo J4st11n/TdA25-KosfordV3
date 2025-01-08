@@ -3,137 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>15x15 Tic Tac Toe</title>
+    <title>Game</title>
     <link rel="stylesheet" href="/game.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-    <h1>15x15 Tic Tac Toe</h1>
+    <h1 id="title"></h1>
     <div id="game"></div>
     <div id="status">Player X's turn</div>
 
     <script>
-        /*
-        window.onload = async function(){
-            const gridSize = 15;
-            const game = document.getElementById('game');
-            const status = document.getElementById('status');
-            let currentPlayer = 'X';
-
-            let response = await fetch(`/api/v1/games/${location.pathname.split('/').pop()}`, {
-                method: 'GET'
+        window.onload = async () => {
+            let game = await fetch(`/api/v1/games/${location.href.match(/\/game\/([a-f0-9\-]+)/)[1]}`, {
+                method: "GET"
             });
 
-            let json_response = await response.json();
+            let res = await game.json();
 
-            let board = json_response.board;
-
-            function createBoard() {
-                game.innerHTML = '';
-                for (let row = 0; row < gridSize; row++) {
-                    for (let col = 0; col < gridSize; col++) {
-                        const cell = document.createElement('div');
-                        let filling = board[row][col]
-                        cell.textContent = filling;
-                        if(filling){
-                            cell.classList.add('taken');
-                        };
-                        cell.classList.add('cell');
-                        cell.dataset.row = row;
-                        cell.dataset.col = col;
-                        cell.addEventListener('click', onCellClick);
-                        game.appendChild(cell);
-                    }
-                }
-            }
-
-            async function onCellClick(event) {
-                const cell = event.target;
-                const row = parseInt(cell.dataset.row);
-                const col = parseInt(cell.dataset.col);
-
-                if (!board[row][col]) {
-                    board[row][col] = currentPlayer;
-                    cell.textContent = currentPlayer;
-                    cell.classList.add('taken');
-
-                    json_response.board = board;
-
-                    await fetch(`/api/v1/games/${location.pathname.split('/').pop()}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(json_response)
-                    });
-
-                    if (checkWinner(row, col)) {
-                        status.textContent = `Player ${currentPlayer} wins!`;
-                        endGame();
-                    } else if (board.flat().every(cell => cell)) {
-                        status.textContent = 'It\'s a draw!';
-                    } else {
-                        currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
-                        status.textContent = `Player ${currentPlayer}'s turn`;
-                    }
-                }
-            }
-
-            function checkWinner(row, col) {
-                const directions = [
-                    { dr: 0, dc: 1 }, // Horizontal
-                    { dr: 1, dc: 0 }, // Vertical
-                    { dr: 1, dc: 1 }, // Diagonal down-right
-                    { dr: 1, dc: -1 } // Diagonal down-left
-                ];
-
-                for (let { dr, dc } of directions) {
-                    let count = 1;
-
-                    // Check in one direction
-                    for (let i = 1; i < 5; i++) {
-                        const r = row + dr * i;
-                        const c = col + dc * i;
-                        if (r >= 0 && r < gridSize && c >= 0 && c < gridSize && board[r][c] === currentPlayer) {
-                            count++;
-                        } else {
-                            break;
-                        }
-                    }
-
-                    // Check in the opposite direction
-                    for (let i = 1; i < 5; i++) {
-                        const r = row - dr * i;
-                        const c = col - dc * i;
-                        if (r >= 0 && r < gridSize && c >= 0 && c < gridSize && board[r][c] === currentPlayer) {
-                            count++;
-                        } else {
-                            break;
-                        }
-                    }
-
-                    if (count >= 5) {
-                        return true;
-                    }
-                }
-
-                return false;
-            }
-
-            function endGame() {
-                document.querySelectorAll('.cell').forEach(cell => {
-                    cell.removeEventListener('click', onCellClick);
-                    cell.style.cursor = 'default'
-
-                    fetch(`/api/v1/games/${location.pathname.split('/').pop()}`, {
-                        method: 'DELETE'
-                    });
-                });
-            }
-
-            createBoard();
-        }
-        */
+            document.getElementById("title").innerText = res.name;
+        };
     </script>
 </body>
 </html>

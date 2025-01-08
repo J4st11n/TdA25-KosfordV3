@@ -2,34 +2,40 @@
 <html>
     <head>
         <title>Kosford Piškvorky</title>
-        <link rel="stylesheet" href="/index.css">
+        <link rel="stylesheet" href="/create_game.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Create Game Game</title>
     </head>
     <body>
         <div>
-            <input id="name" type="text">
-            <br>
-            <br>
-            <div class="button-group">
-                <input type="radio" id="beginner" name="difficulty" value="beginner">
-                <label for="beginner">Beginner</label>
-            
-                <input type="radio" id="easy" name="difficulty" value="easy">
-                <label for="easy">Easy</label>
-            
-                <input type="radio" id="medium" name="difficulty" value="medium">
-                <label for="medium">Medium</label>
-            
-                <input type="radio" id="hard" name="difficulty" value="hard">
-                <label for="hard">Hard</label>
-            
-                <input type="radio" id="extreme" name="difficulty" value="extreme">
-                <label for="extreme">Extreme</label>
+            <div class="name-field">
+                <a class="name-title">Název hry:</a>
+                <input id="name" type="text" class="game-name" maxlength="40">
             </div>
-            <br>
-            <button onclick="createGame()" type="button">Create Game</button>
-            <br>
-            <p id="output"></p>
+
+            <div style="display: grid;">
+                <a class="name-title" style="position: relative;left: 5vh;">Obtížnost:</a>
+                <div class="button-group">
+                    <input type="radio" id="beginner" name="difficulty" value="beginner">
+                    <label for="beginner" style="color: white; font-family: sans-serif;">Beginner</label>
+                
+                    <input type="radio" id="easy" name="difficulty" value="easy">
+                    <label for="easy" style="color: white; font-family: sans-serif;">Easy</label>
+                
+                    <input type="radio" id="medium" name="difficulty" value="medium">
+                    <label for="medium" style="color: white; font-family: sans-serif;">Medium</label>
+                
+                    <input type="radio" id="hard" name="difficulty" value="hard">
+                    <label for="hard" style="color: white; font-family: sans-serif;">Hard</label>
+                
+                    <input type="radio" id="extreme" name="difficulty" value="extreme">
+                    <label for="extreme" style="color: white; font-family: sans-serif;">Extreme</label>
+                </div>
+            </div>
+
+            <div style="padding: 5vh;">
+                <button onclick="createGame()" type="button" class="start-button">START</button>
+            </div>
         </div>
 
         <script>
@@ -37,10 +43,11 @@
                 let name = document.getElementById("name")
                 let difficulty = document.querySelector('input[name="difficulty"]:checked');
 
-                console.log(name.value, difficulty.value)
-
                 let game = await fetch("/api/v1/games", {
                     method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
                     body: JSON.stringify({
                         name: name.value,
                         difficulty: difficulty.value,
@@ -50,7 +57,15 @@
 
                 let output = document.getElementById("output");
 
-                output.value = game.body;
+                let res = await game.json()
+
+                console.log(game.status, res.uuid)
+
+                if(game.status === 201){
+                    location.href = `/game/${res.uuid}`
+                } else {
+                    // error
+                };
             };
         </script>
     </body>

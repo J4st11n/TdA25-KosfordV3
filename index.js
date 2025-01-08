@@ -46,20 +46,18 @@ app.get('/game/:game_id', async (req, res) => {
 app.post('/api/v1/games', async (req, res) => {
     let game_params = req.body;
 
-    writeFileSync(new Date().toLocaleTimeString().replaceAll(".", "").replaceAll(" ", "_"), JSON.stringify(game_params));
-
     if(!game_params?.difficulty) return res.status(400).json({
-        'code': 422,
+        'code': 400,
         'message': 'Bad request: Missing field DifficultyType'
     });
 
     if(!game_params?.name) return res.status(400).json({
-        'code': 422,
+        'code': 400,
         'message': 'Bad request: Missing field name'
     });
 
     if(!game_params?.board) return res.status(400).json({
-        'code': 422,
+        'code': 400,
         'message': 'Bad request: Missing field board'
     });
 
