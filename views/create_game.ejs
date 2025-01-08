@@ -4,9 +4,14 @@
         <title>Kosford Piškvorky</title>
         <link rel="stylesheet" href="/create_game.css">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Create Game Game</title>
+        <title>Create Game</title>
+        <link rel="icon" type="image/x-icon" href="/mini.ico">
     </head>
     <body>
+        <div style="align-self: normal; justify-self: normal; left: 0; position: absolute; padding: 3vh;">
+            <a style="font-size: large; font-weight: bold; cursor: pointer; border: 3px solid white; padding: 3px;" onclick="location.href = '/'">Go Back</a>
+        </div>
+
         <div>
             <div class="name-field">
                 <a class="name-title">Název hry:</a>
@@ -63,8 +68,6 @@
 
                 if(game.status === 201){
                     location.href = `/game/${res.uuid}`
-                } else {
-                    // error
                 };
             };
         </script>
