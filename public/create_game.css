@@ -38,10 +38,29 @@ body {
     justify-self: center;
 }
 
+.beginner {
+    background:  linear-gradient(to right, #008A0F, #1A8C0C);
+}
+
+.easy {
+    background:  linear-gradient(to right, #358D09, #4F8F06);
+}
+
+.medium {
+    background:  linear-gradient(to right, #6A9003, #849200);
+}
+
+.hard {
+    background:  linear-gradient(to right, #847200, #845201);
+}
+
+.extreme {
+    background:  linear-gradient(to right, #833201, #831202 );
+}
+
 .button-group label {
     padding: 1vh 1.5vh;
-    background-color: #272727;
-    border: 1px solid #5f5f5f;
+    border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s, color 0.3s;
@@ -51,9 +70,7 @@ body {
     display: none;
 }
 .button-group input[type="radio"]:checked + label {
-    background-color: #007BFF;
-    color: white;
-    border-color: #0056b3;
+    border: 1px solid white;
 }
 
 .start-button {
