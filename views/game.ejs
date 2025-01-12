@@ -3,28 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game</title>
+    <title>Piškvorky - Hra</title>
+    
     <link rel="stylesheet" href="/css/game.css">
     <link rel="icon" href="/img/Think-different-Academy_LOGO_cerny.ico" media="(prefers-color-scheme: light)">
     <link rel="icon" href="/img/Think-different-Academy_LOGO_bily.ico" media="(prefers-color-scheme: dark)">
 </head>
 <body>
-    <div style="align-self: normal; justify-self: normal; left: 0; position: absolute; padding: 3vh;">
-        <a style="font-size: large; font-weight: bold; cursor: pointer; border: 3px solid white; padding: 3px;" onclick="location.href = '/'">Go Back</a>
+    <div>
+        <a class="back-btn" onclick="location.href = '/'">Go Back</a>
     </div>
 
     <h1 id="title"></h1>
 
+    <div id="difficulty" class="difficulty"></div>
+    <div id="status" class="status"></div>
+
+    <div id="board" class="board"></div>
+
     <script>
         window.onload = async () => {
-            let game = await fetch(`/api/v1/games/${location.href.match(/\/game\/([a-f0-9\-]+)/)[1]}`, {
+            const uuid = location.href.match(/\/game\/([a-f0-9\-]+)/)[1];
+
+            // Získání herních dat z API
+            let game = await fetch(`/api/v1/games/${uuid}`, {
                 method: "GET"
             });
 
             let res = await game.json();
-
+            
+            // Zobrazení názvu a obtížnosti
             document.getElementById("title").innerText = res.name;
+            document.getElementById("difficulty").innerText = `Obtížnost: ${capitalizeFirstLetter(res.difficulty)}`;
+
+            // Zobrazení aktuálního stavu hry
+            document.getElementById("status").innerText = `Stav hry: ${capitalizeFirstLetter(res.gameState)}`;
+
+            // Vykreslení herní desky
+            const board = res.board;
+            let boardHtml = '';
+            for (let row = 0; row < 15; row++) {
+                for (let col = 0; col < 15; col++) {
+                    const cellValue = board[row][col];
+                    boardHtml += `<div class="cell ${cellValue}" data-row="${row}" data-col="${col}">${cellValue}</div>`;
+                }
+            }
+            document.getElementById("board").innerHTML = boardHtml;
+
+            // Přidání funkce pro kliknutí na buňku
+            const cells = document.querySelectorAll(".cell");
+            cells.forEach(cell => {
+                cell.addEventListener("click", async (e) => {
+                    const row = e.target.getAttribute("data-row");
+                    const col = e.target.getAttribute("data-col");
+
+                    // Pokud je buňka prázdná, provedeme tah
+                    if (!e.target.classList.contains("X") && !e.target.classList.contains("O")) {
+                        const currentPlayer = res.board.flat().filter(val => val === "X").length <= res.board.flat().filter(val => val === "O").length ? "X" : "O";
+
+                        // Odeslání požadavku na backend pro změnu stavu buňky
+                        await fetch(`/api/v1/games/${uuid}`, {
+                            method: "PUT",
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                board: updateBoard(board, row, col, currentPlayer),
+                            })
+                        });
+
+                        // Aktualizace UI po úspěšném tahu
+                        e.target.innerText = currentPlayer;
+                        e.target.classList.add(currentPlayer);
+                    }
+                });
+            });
         };
+
+        function updateBoard(board, row, col, symbol) {
+            let newBoard = JSON.parse(JSON.stringify(board)); // Vytvoření kopie desky
+            newBoard[row][col] = symbol;
+            return newBoard;
+        }
+
+        function capitalizeFirstLetter(string) {
+            return string.charAt(0).toUpperCase() + string.slice(1);
+        }
     </script>
 </body>
 </html>
