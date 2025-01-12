@@ -4,8 +4,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #121212;
+    background-color: #171725;
     color: #fff;
     font-family: Arial, sans-serif;
     overflow: hidden;
+    font-weight: bold;
+    font-size: 5vh;
 }

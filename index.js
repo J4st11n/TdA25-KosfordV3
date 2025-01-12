@@ -189,4 +189,15 @@ app.delete('/api/v1/games/:game_id', async (req, res) => {
 
 /***************************** API *****************************/
 
+app.get("/api/*", (req, res) => {
+    res.status(404).json({
+        'code': 404,
+        'message': 'Resource not found'
+    });
+});
+
+app.get("*", (req, res) => {
+    res.status(404).render("404");
+});
+
 app.listen(3000);
